@@ -15,9 +15,6 @@ const Book = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        commentcount: {
-            type: DataTypes.INTEGER,
-        },
     },
     {
         timestamps: false,
@@ -27,9 +24,13 @@ const Book = sequelize.define(
 const Comment = sequelize.define(
     "Comment",
     {
-        book_id: {
+        bookId: {
             type: DataTypes.UUID,
             allowNull: false,
+            references: {
+                model: Book,
+                key: "_id",
+            },
         },
         content: {
             type: DataTypes.TEXT,
@@ -40,11 +41,6 @@ const Comment = sequelize.define(
         timestamps: false,
     }
 );
-
-Book.hasMany(Comment, {
-    foreignKey: "book_id",
-});
-Comment.hasOne(Book);
 
 sequelize.sync();
 

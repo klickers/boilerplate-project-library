@@ -1,12 +1,12 @@
 ("use strict");
 
-const { Book } = require("../helpers/db");
+const { Book, Comment } = require("../helpers/db");
 
 module.exports = function (app) {
     app.route("/api/books")
         .get(function (req, res) {
             //response will be array of book objects
-            //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+            //json res format: [{"_id": bookId, "title": book_title, "commentcount": num_of_comments },...]
         })
 
         .post(async function (req, res) {
@@ -33,18 +33,47 @@ module.exports = function (app) {
 
     app.route("/api/books/:id")
         .get(function (req, res) {
-            let bookid = req.params.id;
-            //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+            let bookId = req.params.id;
+            //json res format: {"_id": bookId, "title": book_title, "comments": [comment,comment,...]}
         })
 
-        .post(function (req, res) {
-            let bookid = req.params.id;
-            let comment = req.body.comment;
-            //json res format same as .get
+        .post(async function (req, res) {
+            let bookId = req.params.id;
+            let content = req.body.comment;
+
+            if (!content) {
+                res.send("missing required field comment");
+                return;
+            }
+
+            try {
+                const book = await Book.findByPk(bookId);
+                if (!book) {
+                    res.send("no book exists");
+                    return;
+                }
+
+                await Comment.create({
+                    bookId,
+                    content,
+                });
+
+                const comments = await Comment.findAll({
+                    where: { bookId },
+                });
+                commentContent = comments.map((comment) => comment.content);
+
+                res.status(200).json({
+                    ...book.dataValues,
+                    comments: commentContent,
+                });
+            } catch (e) {
+                res.json({ error: e });
+            }
         })
 
         .delete(function (req, res) {
-            let bookid = req.params.id;
+            let bookId = req.params.id;
             //if successful response will be 'delete successful'
         });
 };
