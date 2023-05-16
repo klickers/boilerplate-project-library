@@ -1,6 +1,6 @@
 ("use strict");
 
-const { Book, Comment } = require("../helpers/db");
+const { sequelize, Book, Comment } = require("../helpers/db");
 
 module.exports = function (app) {
     app.route("/api/books")
@@ -44,9 +44,7 @@ module.exports = function (app) {
 
         .delete(async function (req, res) {
             try {
-                await Book.destroy({
-                    truncate: true,
-                });
+                sequelize.sync({ force: true });
                 res.status(200).send("complete delete successful");
             } catch (e) {
                 res.json({ error: e });
