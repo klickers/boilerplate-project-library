@@ -32,9 +32,30 @@ module.exports = function (app) {
         });
 
     app.route("/api/books/:id")
-        .get(function (req, res) {
+        .get(async function (req, res) {
             let bookId = req.params.id;
-            //json res format: {"_id": bookId, "title": book_title, "comments": [comment,comment,...]}
+
+            try {
+                const book = await Book.findByPk(bookId);
+                if (!book) {
+                    res.send("no book exists");
+                    return;
+                }
+
+                const comments = await Comment.findAll({
+                    where: { bookId },
+                });
+                commentContent = comments
+                    ? comments.map((comment) => comment.content)
+                    : [];
+
+                res.status(200).json({
+                    ...book.dataValues,
+                    comments: commentContent,
+                });
+            } catch (e) {
+                res.json({ error: e });
+            }
         })
 
         .post(async function (req, res) {
