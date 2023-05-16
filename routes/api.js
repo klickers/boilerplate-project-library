@@ -4,9 +4,24 @@ const { Book, Comment } = require("../helpers/db");
 
 module.exports = function (app) {
     app.route("/api/books")
-        .get(function (req, res) {
-            //response will be array of book objects
-            //json res format: [{"_id": bookId, "title": book_title, "commentcount": num_of_comments },...]
+        .get(async function (req, res) {
+            try {
+                const getBooks = await Book.findAll();
+                let books = getBooks;
+
+                await Promise.all(
+                    getBooks.map(async (book, index) => {
+                        books[index].dataValues.commentcount =
+                            await Comment.count({
+                                where: { bookId: book._id },
+                            });
+                    })
+                );
+
+                res.status(200).json(books);
+            } catch (e) {
+                res.json({ error: e });
+            }
         })
 
         .post(async function (req, res) {

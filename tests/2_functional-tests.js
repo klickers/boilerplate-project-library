@@ -1,11 +1,3 @@
-/*
- *
- *
- *       FILL IN EACH FUNCTIONAL TEST BELOW COMPLETELY
- *       -----[Keep the tests in the same order!]-----
- *
- */
-
 const chaiHttp = require("chai-http");
 const chai = require("chai");
 const assert = chai.assert;
@@ -66,12 +58,32 @@ suite("Functional Tests", function () {
             }
         );
 
-        /*
         suite("GET /api/books => array of books", function () {
             test("Test GET /api/books", function (done) {
-                //done();
+                chai.request(server)
+                    .get("/api/books")
+                    .end(function (err, res) {
+                        assert.equal(res.status, 200);
+                        assert.isArray(res.body, "response should be an array");
+                        assert.property(
+                            res.body[0],
+                            "title",
+                            "Book in array should contain title"
+                        );
+                        assert.property(
+                            res.body[0],
+                            "_id",
+                            "Book in array should contain _id"
+                        );
+                        assert.property(
+                            res.body[0],
+                            "commentcount",
+                            "Book in array should contain commentcount"
+                        );
+                        done();
+                    });
             });
-        });*/
+        });
 
         suite("GET /api/books/[id] => book object with [id]", function () {
             test("Test GET /api/books/[id] with id not in db", function (done) {
