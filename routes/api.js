@@ -42,8 +42,15 @@ module.exports = function (app) {
             }
         })
 
-        .delete(function (req, res) {
-            //if successful response will be 'complete delete successful'
+        .delete(async function (req, res) {
+            try {
+                await Book.destroy({
+                    truncate: true,
+                });
+                res.status(200).send("complete delete successful");
+            } catch (e) {
+                res.json({ error: e });
+            }
         });
 
     app.route("/api/books/:id")
