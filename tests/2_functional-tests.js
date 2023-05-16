@@ -35,12 +35,12 @@ suite("Functional Tests", function () {
                             assert.property(
                                 res.body,
                                 "title",
-                                "Books in array should contain title"
+                                "Book object should contain title"
                             );
                             assert.property(
                                 res.body,
                                 "_id",
-                                "Books in array should contain _id"
+                                "Book object should contain _id"
                             );
                             bookId = res.body._id;
                             done();
