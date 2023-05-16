@@ -45,7 +45,7 @@ module.exports = function (app) {
                 const comments = await Comment.findAll({
                     where: { bookId },
                 });
-                commentContent = comments
+                let commentContent = comments
                     ? comments.map((comment) => comment.content)
                     : [];
 
